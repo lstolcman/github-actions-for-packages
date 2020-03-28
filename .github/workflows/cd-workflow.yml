@@ -27,10 +27,14 @@ jobs:
         run: |
           npm install
           npm run build
+          docker build . -t test1234
+          docker save test1234 -o test1234.tar
+          zstd test1234.tar
           mkdir ~/.ssh
           echo "$remote_key" > ~/.ssh/gh_actions_key
           chmod 600 ~/.ssh/gh_actions_key
           rsync -avzr --delete -e "ssh -p ${remote_port} -i ~/.ssh/gh_actions_key -o StrictHostKeyChecking=no" ${local_dir} ${remote_user}@${remote_host}:${remote_dir}
+          rsync -avzr --delete -e "ssh -p ${remote_port} -i ~/.ssh/gh_actions_key -o StrictHostKeyChecking=no" test1234.tar.zst ${remote_user}@${remote_host}:${remote_dir}
 
           
           
